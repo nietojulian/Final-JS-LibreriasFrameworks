@@ -204,6 +204,136 @@ JuegoDulces = (function () {
         soltarDulce($('.col-' + column).find('div').eq(row));
     }
 
+    //Soltar dulce
+    function soltarDulce(dulce)
+    {
+        dulce.droppable(
+            {
+                disabled: false,
+                accept: ".CandySelect",
+                drop: function (event, ui)
+                {
+                    var Dulce1 = CargaDulce(
+                        ui.draggable.data("typeOfCandy"),
+                        $(this).data("row"),
+                        $(this).data("column")
+                    );
+                    var movimientoDulce = obenerMovimientoDulce(ui.draggable);
+                    Dulce1.insertAfter(this);
+                    var Dulce2 = CargaDulce(
+                        $(this).data("typeOfCandy"),
+                        ui.draggable.data("row"),
+                        ui.draggable.data("column")
+                    );
+                    Dulce2.css({"top": ui.draggable.css("top"), "left": ui.draggable.css("left")});
+                    Dulce2.insertAfter(ui.draggable);
+                    Dulce2.animate({"top": 0, "left": 0}, "fast");
+                    $(this).detach();
+                    $(ui.draggable).detach();
+                    var parejaDulce1 = dulcePareja(Dulce1,"dulceEmparejado");
+                    var parejaDulce2 = dulcePareja(Dulce2,"dulceEmparejado");
+                    if (parejaDulce1.valid || parejaDulce2.valid)
+                    {
+                        setPlayedCount();
+                        mostrarPuntuacion(parejaDulce1.points + parejaDulce2.points);
+                        $(Dulce2).promise().done(function() {
+
+                            $(".dulceEmparejado").fadeTo(300,0).fadeTo(300,1).fadeTo(300,0).fadeTo(300,1).hide(300);
+
+                            $(".dulceEmparejado").promise().done(function () {
+                                $(".dulceEmparejado").remove();
+                                cargarDulces();
+                            });
+                        });
+                    }
+                    else
+                    {
+                        $(this).insertAfter(Dulce1);
+                        $(ui.draggable).css(volverPosision(movimientoDulce));
+                        $(ui.draggable).insertAfter(Dulce2);
+                        Dulce1.remove();
+                        Dulce2.remove();
+                        $(ui.draggable).animate({"top": 0, "left": 0}, 500);
+                     }
+                }
+            });
+    }
+
+
+    //Emparejamiento de dulces
+    function dulcePareja(candy,cssSelector){
+        let column = $(candy).data("column");
+        let row = $(candy).data("row");
+        var parejaOK = {"valid":false,"points":0};
+        let candyLeft = $(".col-"+(column-1)).find("div").eq(row-1);
+        let candyLeftLeft = $(".col-"+(column-2)).find("div").eq(row-1);
+        let candyRight = $(".col-"+(column+1)).find("div").eq(row-1);
+        let candyRightRight = $(".col-"+(column+2)).find("div").eq(row-1);
+        if ($(candy).data("typeOfCandy") == $(candyRight).data("typeOfCandy") && $(candy).data("typeOfCandy") == $(candyLeft).data("typeOfCandy"))
+        {
+             $(candy).addClass(cssSelector);
+             $(candyRight).addClass(cssSelector);
+             $(candyLeft).addClass(cssSelector);
+             parejaOK.valid = true;
+             parejaOK.points =+ 100;
+        }
+        if ( $(candy).data("typeOfCandy") == $(candyLeft).data("typeOfCandy") && $(candy).data("typeOfCandy") == $(candyLeftLeft).data("typeOfCandy"))
+        {
+            $(candy).addClass(cssSelector);
+            $(candyLeft).addClass(cssSelector);
+            $(candyLeftLeft).addClass(cssSelector);
+             parejaOK.valid = true;
+             parejaOK.points =+ 500;
+        }
+        if ( $(candy).data("typeOfCandy") == $(candyRight).data("typeOfCandy") && $(candy).data("typeOfCandy") == $(candyRightRight).data("typeOfCandy"))
+        {
+            $(candy).addClass(cssSelector);
+            $(candyRight).addClass(cssSelector);
+            $(candyRightRight).addClass(cssSelector);
+            parejaOK.valid = true;
+            parejaOK.points =+ 500;
+        }
+        let candyBefore = $(".col-"+(column)).find("div").eq((row - 2<0?10:(row -2)));
+        let candyBeforeBefore = $(".col-"+(column)).find("div").eq((row - 3<0?10:(row -3)));
+        let candyAfter = $(".col-"+(column)).find("div").eq(row);
+        let candyAfterAfter = $(".col-"+(column)).find("div").eq(row+1);
+        if ($(candy).data("typeOfCandy") == $(candyBefore).data("typeOfCandy") && $(candy).data("typeOfCandy") == $(candyAfter).data("typeOfCandy"))
+        {
+            $(candy).addClass(cssSelector);
+            $(candyBefore).addClass(cssSelector);
+            $(candyAfter).addClass(cssSelector);
+            parejaOK.valid = true;
+            parejaOK.points =+ 100;
+        }
+        if ( $(candy).data("typeOfCandy") == $(candyBefore).data("typeOfCandy")    &&   $(candy).data("typeOfCandy") == $(candyBeforeBefore).data("typeOfCandy"))
+        {
+            $(candy).addClass(cssSelector);
+            $(candyBefore).addClass(cssSelector);
+            $(candyBeforeBefore).addClass(cssSelector);
+            parejaOK.valid = true;
+            parejaOK.points =+ 500;
+        }
+        if ( $(candy).data("typeOfCandy") == $(candyAfter).data("typeOfCandy")   &&   $(candy).data("typeOfCandy") == $(candyAfterAfter).data("typeOfCandy"))
+        {
+            $(candy).addClass(cssSelector);
+            $(candyAfter).addClass(cssSelector);
+            $(candyAfterAfter).addClass(cssSelector);
+            parejaOK.valid = true;
+            parejaOK.points =+ 500;
+        }
+        return parejaOK;
+    }
+
+    //Obtener movimiento del dulce
+    function obenerMovimientoDulce (candy)
+    {
+        let top = parseInt($(candy).css("top"));
+        let left = parseInt($(candy).css("left"));
+        if (left<-100){return "left";}
+        if (left>100){return "right";}
+        if (top>40){return "down";}
+        if (top<-40){return "up";}
+    }
 
 
     //Volver a la posicion

@@ -11,12 +11,17 @@ body{
   background-size: cover;
 }
 
+
+
 .main-container{
   width: 90%;
   margin: 0 auto;
   display: flex;
   flex-flow: row wrap;
   justify-content: space-between;
+
+  min-width: 1700px;
+
 }
 
 .main-titulo{
@@ -25,6 +30,17 @@ body{
   color: #DCFF0E;
   width: 100%;
 }
+
+
+.gameOver-title{
+  font-family: gameFont;
+  font-size: 2em;
+  color: #DCFF0E;
+  width: 100%;
+  display: none;
+  text-align: center;
+}
+
 
 .panel-tablero{
   width: 70%;
@@ -44,7 +60,6 @@ body{
   justify-content: space-between;
 }
 
-
 .score, .moves, .time{
   text-align: center;
   height: 23%;
@@ -53,7 +68,6 @@ body{
   border-radius: 5px;
   background: rgba(232, 115, 6, 0.5);
 }
-
 
 .buttons{
   height: 10%;
@@ -102,5 +116,33 @@ div[class^='col']{
 .elemento{
   width: 99.4px;
   height: 96px;
+}
 
+.candy{
+  width: 120px;
+  height: 95px;
+}
+
+.candy1{
+  background: url("../image/1.png")no-repeat;
+  background-size:contain;
+}
+
+.candy2{
+  background: url("../image/2.png")no-repeat;
+  background-size:contain;
+}
+
+.candy3{
+  background: url("../image/3.png")no-repeat;
+  background-size:contain;
+}
+
+.candy4{
+  background: url("../image/4.png")no-repeat;
+  background-size:contain;
+}
+
+.candyTemp{
+  background-color: yellow;
 }
